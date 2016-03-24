@@ -102,3 +102,15 @@ var stopBet = function () {
 }
 stopBet()
 startBet()
+
+var target = document.querySelector('#past')
+var observer = new MutationObserver(function (mutations) {
+  mutations.forEach(function (mutation) {
+    console.log(mutation.type)
+  })
+})
+var config1 = {attributes: true, childList: true, characterData: true}
+var config2 = {childList: true}
+observer.observe(target, config1)
+// observer.observe(target, config2)
+// observer.disconnect()

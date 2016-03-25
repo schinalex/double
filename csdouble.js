@@ -17,11 +17,12 @@ double.click() // x2 the betAmount
 red.click() // bet on red
 green.click() // bet on green
 black.click() // bet on black
+startBet() // auto bet on green with the settings below
+stopBet() // stop it now!!! :D
 */
 
 // settings :)
-var execute = true
-var timeout = 60000
+var timeout = 10000
 var list = {
   nrBets: [9, 7, 4, 4, 2, 3, 2, 1, 1, 2],
   totalBets: [9, 16, 20, 24, 26, 29, 31, 32, 33, 35],
@@ -43,9 +44,15 @@ var list = {
 list.complete()
 var bets = 1
 var lastBalance = getBalance()
-// var pastBetID = 0
-
+var target = document.querySelector('#past')
+var config = {childList: true}
+var observer = new MutationObserver(function () {
+  setTimeout(bet(), timeout)
+})
 var bet = function () {
+  var currentBalance = getBalance()
+  console.log('currentBalance is ' + currentBalance + 'and lastBalance is ' + lastBalance)
+
   for (var i = 0; i < 75; i++) {
     if (bets < list.totalBets[i]) {
       betAmount.value = list.betAmount[i]
@@ -56,61 +63,16 @@ var bet = function () {
     }
   }
 
-  setTimeout(function () {
-    var currentBalance = getBalance()
-    console.log('currentBalance is ' + currentBalance + 'and lastBalance is ' + lastBalance)
-    if (currentBalance > lastBalance) {
-      bets = 1
-    } else {
-      bets++
-    }
-    lastBalance = currentBalance
-    if (execute) {
-      return bet()
-    } else {
-      return console.log('Done!')
-    }
-  }, timeout)
-
-  // var nodes = document.querySelectorAll('#past div')
-  // console.log(nodes.length)
-  // var betID = nodes[9].getAttribute('data-rollid')
-  // if (betID !== pastBetID) {
-  //   var currentBalance = getBalance()
-  //   console.log('currentBalance is ' + currentBalance + 'and lastBalance is ' + lastBalance)
-  //   if (currentBalance > lastBalance) {
-  //     bets = 1
-  //   } else {
-  //     bets++
-  //   }
-  //   lastBalance = currentBalance
-  //   if (execute) {
-  //     return bet()
-  //   } else {
-  //     return console.log('Done!')
-  //   }
-  // }
+  currentBalance > lastBalance ? bets = 1 : bets++
+  lastBalance = currentBalance
 }
 
 var startBet = function () {
-  execute = true
-  bet()
+  observer.observe(target, config)
 }
 
 var stopBet = function () {
-  execute = false
+  observer.disconnect()
 }
-stopBet()
-startBet()
 
-var target = document.querySelector('#past')
-var observer = new MutationObserver(function (mutations) {
-  mutations.forEach(function (mutation) {
-    console.log(mutation.type)
-  })
-})
-var config1 = {attributes: true, childList: true, characterData: true}
-var config2 = {childList: true}
-observer.observe(target, config1)
-// observer.observe(target, config2)
-// observer.disconnect()
+startBet()

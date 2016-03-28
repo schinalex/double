@@ -9,7 +9,12 @@ var balance = document.querySelector('#balance')
 var getBalance = function () {
   return balance.textContent
 }
-
+var storeBets = function () {
+  sessionStorage.setItem('bets', bets)
+}
+var getStoredBets = function () {
+  sessionStorage.getItem('bets')
+}
 /*
 // API
 betAmount.value = 15 // set betAmount
@@ -42,7 +47,7 @@ var list = {
   }
 }
 list.complete()
-var bets = 1
+var bets = sessionStorage.getItem('bets') || 1
 var lastBalance = getBalance()
 var target = document.querySelector('#past')
 var config = {childList: true}
@@ -64,6 +69,7 @@ var bet = function () {
   }
 
   currentBalance > lastBalance ? bets = 1 : bets++
+  storeBets()
   lastBalance = currentBalance
 }
 
